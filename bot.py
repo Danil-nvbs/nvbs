@@ -17,9 +17,6 @@ service = apiclient.discovery.build('sheets', 'v4', http = httpAuth) # Выби�
 driveService = apiclient.discovery.build('drive', 'v3', http = httpAuth) # Выбираем работу с Google Drive и 3 версию API
 
 
-
-
-
 def sms2(bot, update):
     bot.message.reply_text('Введите количество подключений, {}'.format(bot.message.chat.id))
     my_keyboard = ReplyKeyboardMarkup([['/start', 'Анекдот', '2'], ['3', '4', '5', '6']], resize_keyboard=True)
@@ -30,40 +27,42 @@ def sms2(bot, update):
 def read(bot, update):
     conn = sqlite3.connect('orders.db')
     cur = conn.cursor()
-    cur.execute("""CREATE TABLE IF NOT EXISTS equip(
-       type TEXT,
-       sn TEXT PRIMARY KEY,
-       storage_date TEXT,
-       executor TEXT,
-       take_date TEXT,
-       cont_moz TEXT,
-       cont_moz_date TEXT,
-       cont_ex TEXT,
-       cont_ex_date TEXT);
-    """)
-    conn.commit()
     print('read_')
 #    print(read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!B2:B'))
-    res = read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!A2:I')
-    real_result = []
-    for line in res:
-        one_line = []
-        for cell in line:
-            if cell == None:
-                cell = ' '
-            print(cell)
-            one_line.append(cell)
-        t = tuple(one_line)
+#    res = read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!A2:I')
+#    real_result = []
+#    for line in res:
+#        one_line = []
+#        for cell in line:
+#            if cell == None:
+#                cell = ' '
+#            one_line.append(cell)
+#        while len(one_line) < 9:
+#            one_line.append('')
+#        t = tuple(one_line)
+#        real_result.append(t)
+#    cur.executemany("INSERT OR REPLACE INTO equip VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);", real_result)
+#    cur.execute('INSERT OR REPLACE INTO equip VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (t))
+#    conn.commit()
+#        cur.execute("SELECT * FROM equip;")
+#        three_results = cur.fetchall()
+#        print(three_results)
+    query = 'Тихонов Дмитрий Васильевич'
+    cur.execute("select * "
+                "FROM equip_4_6 "
+                "where executor='query'")
+    new_result = cur.fetchall()
+    print(new_result)
+    print(len(new_result))
+    for element in new_result:
+        element[2]
+ #   bot.message.reply_text(new_result[1])
 
-        cur.execute('INSERT INTO equip VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (t))
-        cur.execute("SELECT * FROM equip;")
-        three_results = cur.fetchall()
-        print(three_results)
 
 
 def get_keyboard():
-    my_keyboard = ReplyKeyboardMarkup([['Анекдот'], ['Начать'], ['Читать']], resize_keyboard=True)
-    return my_keyboard
+    rg_start_keyboard = ReplyKeyboardMarkup([['Внести АО на склад', 'Выдать АО'], ['Посмотреть остатки', 'Проверить в МОЗ'], ['Списать АО', 'Вернуть на склад']], resize_keyboard=True)
+    return rg_start_keyboard
 
 
 def get_anecdote(bot, update):
@@ -73,11 +72,6 @@ def get_anecdote(bot, update):
     for text in find:
         page = (text.getText().strip())
     bot.message.reply_text(page)
-
-
-def parrot(bot, update):
-    print(bot.message.text)
-    bot.message.reply_text(bot.message.text)
 
 
 def sms(bot, update):
@@ -91,7 +85,7 @@ def main():
     my_bot.dispatcher.add_handler(CommandHandler('start', sms))
     my_bot.dispatcher.add_handler(CommandHandler('h1', sms2))
     my_bot.dispatcher.add_handler(MessageHandler(Filters.regex('Читать'), read))
-    my_bot.dispatcher.add_handler(MessageHandler(Filters.text, parrot))
+    my_bot.dispatcher.add_handler(MessageHandler(Filters.text, read))
     my_bot.start_polling()
     my_bot.idle()
 

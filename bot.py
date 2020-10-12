@@ -1,27 +1,24 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ReplyKeyboardMarkup
-from settings import TG_TOKEN
+from settings import TG_TOKEN, CREDENTIALS_FILE
+from sheets import read_range
 from bs4 import BeautifulSoup
 import requests
 import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
-CREDENTIALS_FILE = 'pyconnect-292200-4e5bbf9ac5ff.json'  # Имя файла с закрытым ключом, вы должны подставить свое
+import sqlite3
+
 
 # Читаем ключи из файла
 credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
-
 httpAuth = credentials.authorize(httplib2.Http()) # Авторизуемся в системе
 service = apiclient.discovery.build('sheets', 'v4', http = httpAuth) # Выбираем работу с таблицами и 4 версию API
-spreadsheetId = '10JZZnmHUXdC0sMdn4lBZ6RZmElCmGzAHWvtWzsp9ti4' # сохраняем идентификатор файла
-ranges = ["Еще один лист!A2:F8"]  #
+driveService = apiclient.discovery.build('drive', 'v3', http = httpAuth) # Выбираем работу с Google Drive и 3 версию API
 
-results = service.spreadsheets().values().batchGet(spreadsheetId=spreadsheetId,
-                                                   ranges=ranges,
-                                                   valueRenderOption='FORMATTED_VALUE',
-                                                   dateTimeRenderOption='FORMATTED_STRING').execute()
-sheet_values = results['valueRanges'][0]['values']
-print(sheet_values)
+
+
+
 
 def sms2(bot, update):
     bot.message.reply_text('Введите количество подключений, {}'.format(bot.message.chat.id))
@@ -31,7 +28,38 @@ def sms2(bot, update):
     print(bot.message)
 
 def read(bot, update):
-    bot.message.reply_text(sheet_values)
+    conn = sqlite3.connect('orders.db')
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS equip(
+       type TEXT,
+       sn TEXT PRIMARY KEY,
+       storage_date TEXT,
+       executor TEXT,
+       take_date TEXT,
+       cont_moz TEXT,
+       cont_moz_date TEXT,
+       cont_ex TEXT,
+       cont_ex_date TEXT);
+    """)
+    conn.commit()
+    print('read_')
+#    print(read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!B2:B'))
+    res = read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!A2:I')
+    real_result = []
+    for line in res:
+        one_line = []
+        for cell in line:
+            if cell == None:
+                cell = ' '
+            print(cell)
+            one_line.append(cell)
+        t = tuple(one_line)
+
+        cur.execute('INSERT INTO equip VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (t))
+        cur.execute("SELECT * FROM equip;")
+        three_results = cur.fetchall()
+        print(three_results)
+
 
 def get_keyboard():
     my_keyboard = ReplyKeyboardMarkup([['Анекдот'], ['Начать'], ['Читать']], resize_keyboard=True)
@@ -40,7 +68,6 @@ def get_keyboard():
 
 def get_anecdote(bot, update):
     recive = requests.get('http://anekdotme.ru/random')
-    print(recive.text)
     page = BeautifulSoup(recive.text, "html.parser")
     find = page.select('.anekdot_text')
     for text in find:

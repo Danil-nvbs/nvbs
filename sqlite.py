@@ -1,32 +1,34 @@
 import sqlite3
-conn = sqlite3.connect('orders.db')
-cur = conn.cursor()
-cur.execute("""CREATE TABLE IF NOT EXISTS equip(
-   type TEXT,
-   sn TEXT PRIMARY KEY,
-   storage_date TEXT,
-   executor TEXT,
-   take_date TEXT,
-   cont_moz TEXT,
-   cont_moz_date TEXT,
-   cont_ex TEXT,
-   cont_ex_date TEXT);
-""")
-conn.commit()
 
-cur.execute("""CREATE TABLE IF NOT EXISTS users(
-   name TEXT,
-   phone TEXT,
-   tgid INT PRIMARY KEY,
-   role TEXT,
-   area TEXT);
-""")
-conn.commit()
 
-#cur.execute("""INSERT INTO users(name, phone, tgid, role, area)
+def users_list():
+    conn = sqlite3.connect('orders.db')  # Коннектимся к ДБ
+    cur = conn.cursor()  # Создаём курсор
+    cur.execute("""SELECT * FROM users;""")  # Отправляем SQL заппрос
+    utuple = cur.fetchall()  # Получаем ответ
+    ulist = []  # Создаём пустой список
+    for elem in utuple:  # Перебираем список кортежей
+        newelem = list(elem)  # Преобразуем кортеж в список
+        ulist.append(newelem)  # Добавляем в новый список
+    print(ulist)
+    print(ulist[1][1])
+    return ulist  # Возвращаем двумерный список
+
+
+
+users_list()
+
+# cur.execute("""CREATE TABLE IF NOT EXISTS types(
+#   type TEXT PRIMARY KEY);
+# """)
+# conn.commit()
+
+# cur.execute("""INSERT INTO users(name, phone, tgid, role, area)
 #   VALUES('Осипов Данил Дмитриевич', '79636871080', '373531147', 'РГ', '4_6');""")
-#conn.commit()
+# conn.commit()
 
-cur.execute("SELECT * FROM equip;")
-one_result = cur.fetchone()
-print(one_result)
+# cur.execute("""INSERT OR REPLACE INTO types(type) VALUES('Cable 305m');""")
+# conn.commit()
+# cur.execute("SELECT * FROM types;")
+# one_result = cur.fetchall()
+# print(one_result)

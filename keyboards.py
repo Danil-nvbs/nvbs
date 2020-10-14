@@ -1,5 +1,5 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from settings import TG_TOKEN, CREDENTIALS_FILE
 from sheets import read_range
 from bs4 import BeautifulSoup
@@ -8,6 +8,7 @@ import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 import sqlite3
+from sqlite import *
 
 
 def end_keyboard():
@@ -15,8 +16,14 @@ def end_keyboard():
     return end_keyb
 
 
+def auth_keyboard():
+    contact_button = KeyboardButton('Отправить контакт', request_contact=True)
+    auth_keyb = ReplyKeyboardMarkup([[contact_button]], resize_keyboard=True)
+    return auth_keyb
+
+
 def types_keyboard():
-    types_keyb = ReplyKeyboardMarkup([['TVE'], ['Wi-Fi'], ['IPTV'], ['FiberHome']], resize_keyboard=True)
+    types_keyb = ReplyKeyboardMarkup(get_types(), resize_keyboard=True)
     return types_keyb
 
 

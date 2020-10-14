@@ -8,11 +8,11 @@ import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 import sqlite3
+from datetime import datetime, timedelta
 from keyboards import *
 from handlers import *
 from sheets import *
-
-
+from sqlite import *
 
 def test():
     name = 'Огдаров Хасан Бобокулович'
@@ -25,13 +25,10 @@ def test():
     print(len(new_result))
 
 
+"""
 def read(bot, update):
-    conn = sqlite3.connect('orders.db')
-    cur = conn.cursor()
     print('read_')
-    res =read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', 'Data!A2:I')
-#    res = read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!A2:I')
-    real_result = []
+    res = read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!A2:I')
     for line in res:
         one_line = []
         for cell in line:
@@ -42,31 +39,15 @@ def read(bot, update):
             one_line.append('')
         t = tuple(one_line)
         real_result.append(t)
-    cur.executemany("INSERT OR REPLACE INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);", real_result)
-#    cur.execute('INSERT OR REPLACE INTO equip VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (t))
-    conn.commit()
-#        cur.execute("SELECT * FROM equip;")
-#        three_results = cur.fetchall()
-#        print(three_results)
-#    query = 'Тихонов Дмитрий Васильевич'
-    cur.execute("select * FROM users")
-    new_result = cur.fetchall()
-    print(new_result)
-    print(len(new_result))
-#    new_result = cur.fetchall()
-#    print(new_result)
-#    print(len(new_result))
-#    for element in new_result:
-#        element[2]
- #   bot.message.reply_text(new_result[1])
-
+ """
 
 def main():
     my_bot = Updater(TG_TOKEN)
     my_bot.dispatcher.add_handler(MessageHandler(Filters.regex('Анекдот'), get_anecdote))
+    my_bot.dispatcher.add_handler(MessageHandler(Filters.regex('Внести АО на склад'), store_add_equip))
+    my_bot.dispatcher.add_handler(MessageHandler(Filters.contact, auth))
     my_bot.dispatcher.add_handler(CommandHandler('start', start_menu))
-    my_bot.dispatcher.add_handler(CommandHandler('h1', sms2))
-    my_bot.dispatcher.add_handler(MessageHandler(Filters.text, read))
+    my_bot.dispatcher.add_handler(MessageHandler(Filters.text, big_handler))
     my_bot.start_polling()
     my_bot.idle()
 

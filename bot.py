@@ -47,6 +47,7 @@ def main():
     my_bot.dispatcher.add_handler(MessageHandler(Filters.regex('Внести АО на склад'), store_add_equip))
     my_bot.dispatcher.add_handler(MessageHandler(Filters.contact, auth))
     my_bot.dispatcher.add_handler(CommandHandler('start', start_menu))
+    my_bot.dispatcher.add_handler(MessageHandler(Filters.regex('Закончить'), start_menu))
     my_bot.dispatcher.add_handler(MessageHandler(Filters.text, big_handler))
     my_bot.start_polling()
     my_bot.idle()

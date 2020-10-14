@@ -41,6 +41,10 @@ def start_menu(bot, update):
             user_com2 = row[6]
             user_com3 = row[7]
             user_com4 = row[8]
+    set_command(1, "Начало", bot.message.chat.id)
+    set_command(2, '', bot.message.chat.id)
+    set_command(3, '', bot.message.chat.id)
+    set_command(4, '', bot.message.chat.id)
     if user_name == None:
         bot.message.reply_text(f'Необходимо пройти авторизацию', reply_markup=auth_keyboard())
     else:
@@ -53,6 +57,27 @@ def store_add_equip(bot, update):
     set_command('1', "Внести АО", bot.message.chat.id)
 
 def big_handler(bot, update):
+    row = find_user_by_id(str(bot.message.chat.id))
+    user_name = row[0]
+    user_phone = row[1]
+    user_role = row[3]
+    user_area = row[4]
+    user_com1 = row[5]
+    user_com2 = row[6]
+    user_com3 = row[7]
+    user_com4 = row[8]
+    if (user_com1 == "Внести АО") and (find_type(bot.message.text) == 'Yes') and (user_com2 == '') and (user_role == 'РГ' or user_role == "ВИ"):
+        set_command(2, bot.message.text, bot.message.chat.id)
+        bot.message.reply_text('Введите серийники и нажмите "Закончить" после ввода', reply_markup=end_keyboard())
+    if (user_com1 == "Внести АО") and (find_type(user_com2) == "Yes") and (user_role == 'РГ' or user_role == 'ВИ') and bot.message.text != "Закончить":
+        layout = dict(zip(map(ord, "йцукенгшщзхъфывапролджэячсмитьбю.ё"
+                                   'ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,Ё'),
+                                   "qwertyuiop[]asdfghjkl;'zxcvbnm,./`"
+                                   "QWERTYUIOP{}ASDFGHJKL:'ZXCVBNM<>?~"))
+        add_sn(user_com2, bot.message.text.translate(layout).upper(), user_area)
+        bot.message.reply_text(f'Оборудование с серийным номером {bot.message.text.translate(layout).upper()} внесено на склад. Введите ещё '
+                               f'серийник или нажмите "Закончить"')
+
 
 
     return '1'
@@ -64,8 +89,6 @@ def big_handler(bot, update):
 def chose_type(bot, update):
     bot.message.reply_text('Выберирири', reply_markup=end_keyboard())
     return "SN"
-
-
 
 
 def get_anecdote(bot, update):

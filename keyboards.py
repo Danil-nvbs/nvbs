@@ -11,6 +11,11 @@ import sqlite3
 from sqlite import *
 
 
+def end_change_type_keyboard():
+    end_change_type_keyb = ReplyKeyboardMarkup([['Сменить тип'], ['Закончить']], resize_keyboard=True)
+    return end_change_type_keyb
+
+
 def end_keyboard():
     end_keyb = ReplyKeyboardMarkup([['Закончить']], resize_keyboard=True)
     return end_keyb

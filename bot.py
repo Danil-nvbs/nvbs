@@ -14,32 +14,6 @@ from handlers import *
 from sheets import *
 from sqlite import *
 
-def test():
-    name = 'Огдаров Хасан Бобокулович'
-    conn = sqlite3.connect('orders.db')
-    cur = conn.cursor()
-    print('Поехали')
-    cur.execute(f"select * FROM equip_4_6 where executor='{name}'")
-    new_result = cur.fetchall()
-    print(new_result)
-    print(len(new_result))
-
-
-"""
-def read(bot, update):
-    print('read_')
-    res = read_range('1iR0aBHAc4iWvUWxS5_R1zxr7StyL8zPe7YTVKhohLlY', '4_6!A2:I')
-    for line in res:
-        one_line = []
-        for cell in line:
-            if cell == None:
-                cell = ' '
-            one_line.append(cell)
-        while len(one_line) < 9:
-            one_line.append('')
-        t = tuple(one_line)
-        real_result.append(t)
- """
 
 def main():
     my_bot = Updater(TG_TOKEN)

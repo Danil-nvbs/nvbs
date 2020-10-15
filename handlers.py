@@ -68,8 +68,10 @@ def big_handler(bot, update):
     user_com4 = row[8]
     if (user_com1 == "Внести АО") and (find_type(bot.message.text) == 'Yes') and (user_com2 == '') and (user_role == 'РГ' or user_role == "ВИ"):
         set_command(2, bot.message.text, bot.message.chat.id)
-        bot.message.reply_text('Введите серийники и нажмите "Закончить" после ввода', reply_markup=end_keyboard())
-    if (user_com1 == "Внести АО") and (find_type(user_com2) == "Yes") and (user_role == 'РГ' or user_role == 'ВИ') and bot.message.text != "Закончить":
+        bot.message.reply_text('Введите серийные номера в поле ввода \nНажмите "Сменить тип" для внесения '
+                               'оборудования другого типа \nНажмите "Закончить" после ввода',
+                               reply_markup=end_change_type_keyboard())
+    if (user_com1 == "Внести АО") and (find_type(user_com2) == "Yes") and (user_role == 'РГ' or user_role == 'ВИ') and bot.message.text != "Закончить" and bot.message.text != "Сменить тип":
         layout = dict(zip(map(ord, "йцукенгшщзхъфывапролджэячсмитьбю.ё"
                                    'ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,Ё'),
                                    "qwertyuiop[]asdfghjkl;'zxcvbnm,./`"
@@ -77,13 +79,9 @@ def big_handler(bot, update):
         add_sn(user_com2, bot.message.text.translate(layout).upper(), user_area)
         bot.message.reply_text(f'Оборудование с серийным номером {bot.message.text.translate(layout).upper()} внесено на склад. Введите ещё '
                                f'серийник или нажмите "Закончить"')
-
-
-
-    return '1'
-
-
-
+    if (user_com1 == "Внести АО") and (find_type(user_com2) == "Yes") and (user_role == 'РГ' or user_role == 'ВИ') and bot.message.text == "Сменить тип":
+        set_command(2, '', bot.message.chat.id)
+        store_add_equip(bot, update)
 
 
 def chose_type(bot, update):
@@ -98,4 +96,3 @@ def get_anecdote(bot, update):
     for text in find:
         page = (text.getText().strip())
     bot.message.reply_text(page)
-

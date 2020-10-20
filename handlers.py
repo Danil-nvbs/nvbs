@@ -56,6 +56,11 @@ def store_add_equip(bot, update):
     bot.message.reply_text('Выберите тип оборудования', reply_markup=types_keyboard())
     set_command('1', "Внести АО", bot.message.chat.id)
 
+
+def take_equip_si(bot, update, area):
+    bot.message.reply_text('Выберите получателя', reply_markup=make_si_keyboard(area))
+
+
 def big_handler(bot, update):
     row = find_user_by_id(str(bot.message.chat.id))
     user_name = row[0]
@@ -82,6 +87,18 @@ def big_handler(bot, update):
     if (user_com1 == "Внести АО") and (find_type(user_com2) == "Yes") and (user_role == 'РГ' or user_role == 'ВИ') and bot.message.text == "Сменить тип":
         set_command(2, '', bot.message.chat.id)
         store_add_equip(bot, update)
+    if (user_com1 == "Начало") and (user_role == 'РГ' or user_role == 'ВИ') and bot.message.text == "Выдать АО":
+        set_command(1, "Выдать АО", bot.message.chat.id)
+        take_equip_si(bot, update, user_area)
+    if (user_com1 == "Выдать АО") and (user_role == 'РГ' or user_role == 'ВИ') and (find_si(bot.message.text) == 'Yes') and (user_com2 == ''):
+        set_command(2, bot.message.text, bot.message.chat.id)
+        bot.message.reply_text(get_si_remains(user_area, bot.message.text)[0][0] + 'Введите серийные номера в поле ввода \nНажмите "Сменить получателя" для выбора '
+                               'другого получателя \nНажмите "Закончить" после ввода',
+                               reply_markup=end_change_si_keyboard())
+    if (user_com1 == "Выдать АО") and (user_role == 'РГ' or user_role == 'ВИ') and (find_si(user_com2) == 'Yes') and (bot.message.text == 'Сменить получателя'):
+        set_command(2, '', bot.message.chat.id)
+        take_equip_si(bot, update, user_area)
+
 
 
 def chose_type(bot, update):

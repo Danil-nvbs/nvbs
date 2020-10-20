@@ -11,6 +11,7 @@ def get_types():
     for elem in types_tuple:
         newelem = list(elem)
         types_list.append(newelem)
+    types_list.append(['Закончить'])
     return types_list
 
 
@@ -18,6 +19,16 @@ def find_type(type):
     conn = sqlite3.connect('orders.db')
     cur = conn.cursor()
     cur.execute(f"SELECT * FROM types WHERE type= '{type}'")
+    type_result = cur.fetchall()
+    if type_result == []:
+        return 'No'
+    else:
+        return 'Yes'
+
+def find_si(si):
+    conn = sqlite3.connect('orders.db')
+    cur = conn.cursor()
+    cur.execute(f"SELECT * FROM users WHERE name= '{si}'")
     type_result = cur.fetchall()
     if type_result == []:
         return 'No'
@@ -38,6 +49,19 @@ def push_phone(name, id):
     cur = conn.cursor()
     cur.execute(f"UPDATE users SET tgid = '{id}' WHERE name = '{name}'")
     conn.commit()
+
+
+def get_si_list(area):
+    conn = sqlite3.connect('orders.db')
+    cur = conn.cursor()
+    cur.execute(f"SELECT name FROM users WHERE area = '{area}' AND (role = 'СИ' OR role = 'ВИ')")
+    si_tuple = cur.fetchall()
+    si_list = []  # Создаём пустой список
+    count = 0
+    for elem in si_tuple:  # Перебираем список кортежей
+        newelem = list(elem)  # Преобразуем кортеж в список
+        si_list.append(newelem)  # Добавляем в новый список
+    return si_list  # Возвращаем двумерный список
 
 
 def find_user_by_id(id):
@@ -68,6 +92,20 @@ def users_list():
         newelem = list(elem)  # Преобразуем кортеж в список
         user_list.append(newelem)  # Добавляем в новый список
     return user_list  # Возвращаем двумерный список
+
+
+def get_si_remains(area, si):
+    conn = sqlite3.connect('orders.db')  # Коннектимся к ДБ
+    cur = conn.cursor()  # Создаём курсор
+    db = 'equip_' + area
+    cur.execute(f"SELECT * FROM {db} WHERE executor = '{si}'")  # Отправляем SQL заппрос
+    remains_tuple = cur.fetchall()  # Получаем ответ
+    remains_list = []  # Создаём пустой список
+    for elem in remains_tuple:  # Перебираем список кортежей
+        newelem = list(elem)  # Преобразуем кортеж в список
+        remains_list.append(newelem)  # Добавляем в новый список
+    print(remains_list)
+    return(remains_list)
 
 
 """

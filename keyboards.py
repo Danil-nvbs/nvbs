@@ -16,6 +16,11 @@ def end_change_type_keyboard():
     return end_change_type_keyb
 
 
+def end_change_si_keyboard():
+    end_change_si_keyb = ReplyKeyboardMarkup([['Сменить получателя'], ['Закончить']], resize_keyboard=True)
+    return end_change_si_keyb
+
+
 def end_keyboard():
     end_keyb = ReplyKeyboardMarkup([['Закончить']], resize_keyboard=True)
     return end_keyb
@@ -35,3 +40,19 @@ def types_keyboard():
 def rg_start_keyboard():
     rg_start_keyb = ReplyKeyboardMarkup([['Внести АО на склад', 'Выдать АО'], ['Посмотреть остатки', 'Проверить в МОЗ'], ['Списать АО', 'Вернуть на склад']], resize_keyboard=True)
     return rg_start_keyb
+
+
+def make_si_keyboard(area):
+    si_list = get_si_list(area)
+    new_list = []
+    count = 2
+    print('123')
+    for elem in si_list:
+        if (count % 2) == 0:
+            new_list.append(elem)
+        if (count % 2) != 0:
+            new_list[len(new_list) - 1].append(elem[0])
+        count = count + 1
+    new_list.append(['Закончить'])
+    si_keyboard = ReplyKeyboardMarkup(new_list,resize_keyboard=True)
+    return si_keyboard

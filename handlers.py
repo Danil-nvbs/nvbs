@@ -92,12 +92,15 @@ def big_handler(bot, update):
         take_equip_si(bot, update, user_area)
     if (user_com1 == "Выдать АО") and (user_role == 'РГ' or user_role == 'ВИ') and (find_si(bot.message.text) == 'Yes') and (user_com2 == ''):
         set_command(2, bot.message.text, bot.message.chat.id)
-        bot.message.reply_text(get_si_remains(user_area, bot.message.text)[0][0] + 'Введите серийные номера в поле ввода \nНажмите "Сменить получателя" для выбора '
-                               'другого получателя \nНажмите "Закончить" после ввода',
-                               reply_markup=end_change_si_keyboard())
+        bot.message.reply_text(get_si_remains(user_area, bot.message.text), reply_markup=end_change_si_keyboard())
     if (user_com1 == "Выдать АО") and (user_role == 'РГ' or user_role == 'ВИ') and (find_si(user_com2) == 'Yes') and (bot.message.text == 'Сменить получателя'):
         set_command(2, '', bot.message.chat.id)
         take_equip_si(bot, update, user_area)
+    if (user_com1 == "Выдать АО") and (user_role == 'РГ' or user_role == 'ВИ') and (find_si(user_com2) == 'Yes') and (find_si(bot.message.text) != 'Yes') and bot.message.text != 'Закончить' and bot.message.text != 'Сменить получателя':
+        set_command(3, bot.message.text, bot.message.chat.id)
+        take_to_si(user_area, user_com2, bot.message.text, bot, update)
+
+
 
 
 

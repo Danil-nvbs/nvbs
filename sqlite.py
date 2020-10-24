@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta
+from keyboards import *
 
 
 def get_types():
@@ -104,8 +105,43 @@ def get_si_remains(area, si):
     for elem in remains_tuple:  # Перебираем список кортежей
         newelem = list(elem)  # Преобразуем кортеж в список
         remains_list.append(newelem)  # Добавляем в новый список
-    print(remains_list)
-    return(remains_list)
+    finish_text = 'Текущие остатки у исполнителя ' + si + ':\n'
+    for elem in remains_list:
+        if elem[5] == '' and elem[7] == '':
+            finish_text = finish_text + elem[0] + ' - S/N - ' + elem[1] + ' - дата выдачи - ' + elem[2] + ' \n '
+    print(finish_text)
+    return(finish_text)
+
+def take_to_si(area, si, sn, bot, update):
+    time_now = datetime.now().strftime('%d.%m.%Y')
+    conn = sqlite3.connect('orders.db')  # Коннектимся к ДБ
+    cur = conn.cursor()  # Создаём курсор
+    db = 'equip_' + area
+    cur.execute(f"SELECT type, executor FROM {db} WHERE sn = '{sn}'")
+    result = cur.fetchall()
+    print(result)
+    print(len(result))
+    if len(result) == 0:
+        cur.execute(f"INSERT OR REPLACE INTO {db} (type, sn, storage_date, executor, take_date) VALUES ('Неизвестно', '{sn}', '{time_now}', '{si}', '{time_now}')")
+        conn.commit()
+        bot.message.reply_text(f'Оборудование {sn} добавлено на склад {area} и выдано СИ {si}.\nВнесите ещё серийный номер или выберите действиие')
+        print('1')
+        return('added')
+    elif len(result[0]) == 1:
+        print('2')
+        cur.execute(f"UPDATE {db} SET executor = '{si}', take_date = '{time_now}' WHERE sn = '{sn}'")
+        conn.commit()
+        bot.message.reply_text(f'Оборудование {sn} выдано СИ {si}.\nВнесите ещё серийный номер или выберите действиие')
+        return('taked')
+    elif len(result[0]) == 2:
+        print('3')
+        cur.execute(f"UPDATE {db} SET executor = '{si}', take_date = '{time_now}' WHERE sn = '{sn}'")
+        conn.commit()
+        bot.message.reply_text(f'Оборудование {sn} перевыдано СИ {si}.\nВнесите ещё серийный номер или выберите действиие')
+        return('re-taked')
+
+
+
 
 
 """

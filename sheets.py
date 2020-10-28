@@ -29,9 +29,12 @@ def set_range(spreadsheetId, range, values):
                                                                    ['https://www.googleapis.com/auth/spreadsheets',
                                                                     'https://www.googleapis.com/auth/drive'])
     httpAuth = credentials.authorize(httplib2.Http())  # Авторизуемся в системе
+
     service = apiclient.discovery.build('sheets', 'v4', http=httpAuth)  # Выбираем работу с таблицами и 4 версию API
+    print(httpAuth)
     driveService = apiclient.discovery.build('drive', 'v3',
                                              http=httpAuth)  # Выбираем работу с Google Drive и 3 версию API
+
     results = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheetId,
                                                           body={
                                                               "valueInputOption": "USER_ENTERED", # Данные воспринимаются, как вводимые пользователем (считается значение формул)

@@ -32,6 +32,7 @@ def auth_keyboard():
     return auth_keyb
 
 
+
 def types_keyboard():
     types_keyb = ReplyKeyboardMarkup(get_types(), resize_keyboard=True)
     return types_keyb
@@ -56,3 +57,7 @@ def make_si_keyboard(area):
     new_list.append(['Закончить'])
     si_keyboard = ReplyKeyboardMarkup(new_list,resize_keyboard=True)
     return si_keyboard
+
+
+
+

@@ -2,17 +2,6 @@ import sqlite3
 from datetime import datetime, timedelta
 from keyboards import *
 
-conn = sqlite3.connect('orders.db')
-cur = conn.cursor()
-cur.execute("""SELECT * FROM users""")
-res = cur.fetchall()
-
-
-print(res[1][3])
-
-
-
-
 
 def get_types():
     conn = sqlite3.connect('orders.db')

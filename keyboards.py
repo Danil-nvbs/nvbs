@@ -38,9 +38,30 @@ def types_keyboard():
     return types_keyb
 
 
-def rg_start_keyboard():
-    rg_start_keyb = ReplyKeyboardMarkup([['Внести АО на склад', 'Выдать АО'], ['Посмотреть остатки', 'Проверить в МОЗ'], ['Списать АО', 'Вернуть на склад']], resize_keyboard=True)
-    return rg_start_keyb
+def start_keyboard(role):
+    if role == 'РГ':
+        start_keyb = ReplyKeyboardMarkup(
+            [['Внести АО на склад', 'Выдать АО'],
+             ['Посмотреть остатки', 'Проверить в МОЗ'],
+             ['Списать АО', 'Вернуть на склад']],
+            resize_keyboard=True)
+    elif role == 'ВИ':
+        start_keyb = ReplyKeyboardMarkup(
+            [['Внести АО на склад', 'Выдать АО'],
+             ['Свои остатки', 'Общие остатки'],
+             ['Списать своё АО', 'Списать чужое АО'],
+             ['Проверить в МОЗ','Вернуть на склад']],
+            resize_keyboard=True)
+    elif role == 'СИ':
+        start_keyb = ReplyKeyboardMarkup(
+            [['Посмотреть свои остатки', 'Списать на заявки'],
+             ['Передать оборудование', 'Вернуть на склад']],
+            resize_keyboard=True)
+    elif role == 'ДМР':
+        start_keyb = ReplyKeyboardMarkup(
+            [['Остатки по группам', '']]
+        )
+    return start_keyb
 
 
 def make_si_keyboard(area):

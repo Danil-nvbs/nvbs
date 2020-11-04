@@ -14,6 +14,8 @@ from handlers import *
 from sheets import *
 from sqlite import *
 
+# heroku ps:scale worker=1
+
 TG_TOKEN = "1209301262:AAHFpm5MiDbvARPdb9rcO6jYnFBCVB3u6sI"
 CREDENTIALS_FILE = 'pyconnect-292200-4e5bbf9ac5ff.json'
 

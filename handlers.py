@@ -48,7 +48,7 @@ def start_menu(bot, update):
     if user_name == None:
         bot.message.reply_text(f'Необходимо пройти авторизацию', reply_markup=auth_keyboard())
     else:
-        bot.message.reply_text(f'Привет {user_name}, роль - {user_role}, телефон {user_phone}', reply_markup=rg_start_keyboard())
+        bot.message.reply_text(f'Привет {user_name}, роль - {user_role}, телефон {user_phone}', reply_markup=start_keyboard(user_role))
 
 
 
@@ -99,6 +99,9 @@ def big_handler(bot, update):
     if (user_com1 == "Выдать АО") and (user_role == 'РГ' or user_role == 'ВИ') and (find_si(user_com2) == 'Yes') and (find_si(bot.message.text) != 'Yes') and bot.message.text != 'Закончить' and bot.message.text != 'Сменить получателя':
         set_command(3, bot.message.text, bot.message.chat.id)
         take_to_si(user_area, user_com2, bot.message.text, bot, update)
+    if (user_com1 == "Начало") and (user_role == 'РГ' or user_role == 'ВИ') and (bot.message.text == 'Посмотреть остатки'):
+        set_command(1, bot.message.text, bot.message.chat.id)
+        bot.message.reply_text(get_si_remains(user_area, bot.message.text), reply_markup=end_change_si_keyboard())
 
 
 

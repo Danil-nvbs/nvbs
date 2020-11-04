@@ -48,7 +48,8 @@ def start_menu(bot, update):
     if user_name == None:
         bot.message.reply_text(f'Необходимо пройти авторизацию', reply_markup=auth_keyboard())
     else:
-        bot.message.reply_text(f'Привет {user_name}, роль - {user_role}, телефон {user_phone}', reply_markup=start_keyboard(user_role))
+        bot.message.reply_text(f'Привет {user_name}, роль - {user_role}, телефон {user_phone}',
+                               reply_markup=start_keyboard(user_role))
 
 
 def take_equip_si(bot, update, area):
@@ -85,14 +86,13 @@ def big_handler(bot, update):
             and (user_role == 'РГ' or user_role == 'ВИ') \
             and bot.message.text != "Закончить" \
             and bot.message.text != "Сменить тип":
-
         add_sn(user_com2, to_eng_and_up(bot.message.text), user_area)
-        bot.message.reply_text(f'Оборудование с серийным номером {bot.message.text.translate(layout).upper()} внесено на склад. Введите ещё '
-                               f'серийник или нажмите "Закончить"')
+        bot.message.reply_text(f'Оборудование с серийным номером {to_eng_and_up(bot.message.text)} '
+                               f'внесено на склад. Введите ещё серийник или нажмите "Закончить"')
     # Прилетело "Сменить тип"
     if (user_com1 == "Внести АО на склад") \
-            and (find_type(user_com2) == "Yes")\
-            and (user_role == 'РГ' or user_role == 'ВИ')\
+            and (find_type(user_com2) == "Yes") \
+            and (user_role == 'РГ' or user_role == 'ВИ') \
             and bot.message.text == "Сменить тип":
         set_command(2, '', bot.message.chat.id)
         bot.message.reply_text('Выберите тип оборудования', reply_markup=types_keyboard())
@@ -105,15 +105,15 @@ def big_handler(bot, update):
         take_equip_si(bot, update, user_area)
     # Прилетело реально ФИО СИ
     if (user_com1 == "Выдать АО") \
-            and (user_role == 'РГ' or user_role == 'ВИ')\
+            and (user_role == 'РГ' or user_role == 'ВИ') \
             and (find_si(bot.message.text) == 'Yes') \
             and (user_com2 == ''):
         set_command(2, bot.message.text, bot.message.chat.id)
         bot.message.reply_text(get_si_remains(user_area, bot.message.text), reply_markup=end_change_si_keyboard())
     # Прилетело "Внести АО"
     if (user_com1 == "Выдать АО") \
-            and (user_role == 'РГ' or user_role == 'ВИ')\
-            and (find_si(user_com2) == 'Yes')\
+            and (user_role == 'РГ' or user_role == 'ВИ') \
+            and (find_si(user_com2) == 'Yes') \
             and (bot.message.text == 'Сменить получателя'):
         set_command(2, '', bot.message.chat.id)
         take_equip_si(bot, update, user_area)
@@ -129,12 +129,10 @@ def big_handler(bot, update):
     # Прилетело "Посмотреть остатки" от РГКС
     if (user_com1 == "Начало") \
             and (user_role == 'РГ' or user_role == 'ВИ') \
-            and (bot.message.text == 'Посмотреть остатки'):
+            and ((bot.message.text == 'Посмотреть остатки') \
+                 or (bot.message.text == 'Общие остатки')):
         set_command(1, bot.message.text, bot.message.chat.id)
-        bot.message.reply_text(get_si_remains(user_area, bot.message.text), reply_markup=end_change_si_keyboard())
-
-
-
+        bot.message.reply_text(get_area_remains(user_area), reply_markup=start_keyboard(user_role))
 
 
 def chose_type(bot, update):

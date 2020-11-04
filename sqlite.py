@@ -58,7 +58,6 @@ def get_si_list(area):
     cur.execute(f"SELECT name FROM users WHERE area = '{area}' AND (role = 'СИ' OR role = 'ВИ')")
     si_tuple = cur.fetchall()
     si_list = []  # Создаём пустой список
-    count = 0
     for elem in si_tuple:  # Перебираем список кортежей
         newelem = list(elem)  # Преобразуем кортеж в список
         si_list.append(newelem)  # Добавляем в новый список
@@ -109,8 +108,74 @@ def get_si_remains(area, si):
     for elem in remains_list:
         if elem[5] == '' and elem[7] == '':
             finish_text = finish_text + elem[0] + ' - S/N - ' + elem[1] + ' - дата выдачи - ' + elem[2] + ' \n '
-    print(finish_text)
     return(finish_text)
+
+
+def get_area_remains(area):
+    conn = sqlite3.connect('orders.db')
+    cur = conn.cursor()
+    db = 'equip_' + area
+    cur.execute(f"SELECT * from {db}")
+    remains_tuple = cur.fetchall()
+    remains_list = []
+    for elem in remains_tuple:
+        newelem = list(elem)
+        remains_list.append(newelem)
+    count_store = [0, 0, 0, 0]
+    count_si = [0, 0, 0, 0]
+    for row in remains_list:
+        if row[0] == "Wi-Fi" \
+                and (row[3] == "" or row[3] == None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_store[0] = count_store[0] + 1
+        elif row[0] == "TVE" \
+                and (row[3] == "" or row[3] == None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_store[1] = count_store[1] + 1
+        elif row[0] == "IPTV" \
+                and (row[3] == "" or row[3] == None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_store[2] = count_store[2] + 1
+        elif row[0] == "FiberHome" \
+                and (row[3] == "" or row[3] == None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_store[3] = count_store[3] + 1
+        elif row[0] == "Wi-Fi" \
+                and (row[3] != "" and row[3] != None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_si[0] = count_si[0] + 1
+        elif row[0] == "TVE" \
+                and (row[3] != "" and row[3] != None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_si[1] = count_si[1] + 1
+        elif row[0] == "IPTV" \
+                and (row[3] != "" and row[3] != None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_si[2] = count_si[2] + 1
+        elif row[0] == "FiberHome" \
+                and (row[3] != "" and row[3] != None) \
+                and (row[5] == "" or row[5] == None) \
+                and (row[7] == "" or row[7] == None):
+            count_si[3] = count_si[3] + 1
+    finish_text = f'Остатки в ГКС {area}:\n' \
+                  f'На складе:\n' \
+                  f'Wi-Fi - {count_store[0]} штук,\n' \
+                  f'TVE - {count_store[1]} штук,\n' \
+                  f'IPTV - {count_store[2]} штук,\n' \
+                  f'FiberHome - {count_store[3]} штук,\n\n' \
+                  f'На руках:\n' \
+                  f'Wi-Fi - {count_si[0]} штук,\n' \
+                  f'TVE - {count_si[1]} штук,\n' \
+                  f'IPTV - {count_si[2]} штук,\n' \
+                  f'FiberHome - {count_si[3]} штук.'
+    return finish_text
 
 def take_to_si(area, si, sn, bot, update):
     time_now = datetime.now().strftime('%d.%m.%Y')
@@ -119,22 +184,17 @@ def take_to_si(area, si, sn, bot, update):
     db = 'equip_' + area
     cur.execute(f"SELECT type, executor FROM {db} WHERE sn = '{sn}'")
     result = cur.fetchall()
-    print(result)
-    print(len(result))
     if len(result) == 0:
         cur.execute(f"INSERT OR REPLACE INTO {db} (type, sn, storage_date, executor, take_date) VALUES ('Неизвестно', '{sn}', '{time_now}', '{si}', '{time_now}')")
         conn.commit()
         bot.message.reply_text(f'Оборудование {sn} добавлено на склад {area} и выдано СИ {si}.\nВнесите ещё серийный номер или выберите действиие')
-        print('1')
         return('added')
     elif len(result[0]) == 1:
-        print('2')
         cur.execute(f"UPDATE {db} SET executor = '{si}', take_date = '{time_now}' WHERE sn = '{sn}'")
         conn.commit()
         bot.message.reply_text(f'Оборудование {sn} выдано СИ {si}.\nВнесите ещё серийный номер или выберите действиие')
         return('taked')
     elif len(result[0]) == 2:
-        print('3')
         cur.execute(f"UPDATE {db} SET executor = '{si}', take_date = '{time_now}' WHERE sn = '{sn}'")
         conn.commit()
         bot.message.reply_text(f'Оборудование {sn} перевыдано СИ {si}.\nВнесите ещё серийный номер или выберите действиие')
@@ -169,8 +229,3 @@ conn.commit()
  one_result = cur.fetchall()
  print(one_result)
  """
-
-
-
-
-

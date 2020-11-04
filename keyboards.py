@@ -59,8 +59,8 @@ def start_keyboard(role):
             resize_keyboard=True)
     elif role == 'ДМР':
         start_keyb = ReplyKeyboardMarkup(
-            [['Остатки по группам', '']]
-        )
+            [['Остатки по группам']],
+            resize_keyboard=True)
     return start_keyb
 
 

@@ -1,7 +1,6 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from settings import TG_TOKEN, CREDENTIALS_FILE
-from sheets import read_range
 from bs4 import BeautifulSoup
 import requests
 import httplib2

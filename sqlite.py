@@ -111,6 +111,28 @@ def get_si_remains(area, si):
     return(finish_text)
 
 
+def set_sn_cont(area, sn, cont):
+    time_now = datetime.now().strftime('%d.%m.%Y')
+    conn = sqlite3.connect('orders.db')
+    cur = conn.cursor()
+    db = 'equip_' + area
+    cur.execute(f"UPDATE {db} SET cont_moz = '{cont}', cont_moz_date = '{time_now}' WHERE sn = '{sn}'")
+    conn.commit()
+
+
+def get_remains_wifi_moz(area):
+    conn = sqlite3.connect('orders.db')
+    cur = conn.cursor()
+    db = 'equip_' + area
+    cur.execute(f"SELECT sn from {db} WHERE ((cont_moz is null or cont_moz = '')  AND type = 'Wi-FI')")
+    remains_tuple = cur.fetchall()
+    remains_list = []
+    for elem in remains_tuple:
+        newelem = list(elem)
+        remains_list.append(newelem)
+    return(remains_list)
+
+
 def get_area_remains(area):
     conn = sqlite3.connect('orders.db')
     cur = conn.cursor()

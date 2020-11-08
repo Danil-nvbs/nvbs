@@ -131,7 +131,6 @@ def big_handler(bot, update):
             and (user_role == 'РГ' or user_role == 'ВИ') \
             and ((bot.message.text == 'Посмотреть остатки') \
                  or (bot.message.text == 'Общие остатки')):
-        set_command(1, bot.message.text, bot.message.chat.id)
         bot.message.reply_text(get_area_remains(user_area), reply_markup=start_keyboard(user_role))
 
 

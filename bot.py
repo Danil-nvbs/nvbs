@@ -22,6 +22,8 @@ TG_TOKEN = "1209301262:AAHFpm5MiDbvARPdb9rcO6jYnFBCVB3u6sI"
 CREDENTIALS_FILE = 'pyconnect-292200-4e5bbf9ac5ff.json'
 
 
+# print(read_range('1C93At0VJH5I2ZCjrAQtmJnSrF-8dUECE1RKetRXcSbk', 'D:F'))
+
 def main():
     my_bot = Updater(TG_TOKEN)
     my_bot.dispatcher.add_handler(MessageHandler(Filters.regex('Анекдот'), get_anecdote))

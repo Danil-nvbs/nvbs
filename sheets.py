@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import httplib2
 import apiclient.discovery
+from sqlite import *
 from oauth2client.service_account import ServiceAccountCredentials
 
 
@@ -43,3 +44,39 @@ def set_range(spreadsheetId, range, values):
                                                                         "values": values}]
                                                               }
                                                           ).execute()
+
+def moz_check(area):
+    wifi_sn_list = read_range('1C93At0VJH5I2ZCjrAQtmJnSrF-8dUECE1RKetRXcSbk', 'БМОЛ!D2:D')
+    wifi_cont_list = read_range('1C93At0VJH5I2ZCjrAQtmJnSrF-8dUECE1RKetRXcSbk', 'БМОЛ!F2:F')
+    alt_sn = read_range('1C93At0VJH5I2ZCjrAQtmJnSrF-8dUECE1RKetRXcSbk', 'moz2!B2:B')
+    for elem in alt_sn:
+        wifi_sn_list.append(elem)
+    alt_cont = read_range('1C93At0VJH5I2ZCjrAQtmJnSrF-8dUECE1RKetRXcSbk', 'moz2!D2:D')
+    for elem in alt_cont:
+        wifi_cont_list.append(elem)
+    alt2_sn = read_range('1qSjLhAgkvdkABJcn0F-jdbmMTS9vpje9Wc31kGxWYGs', 'бмол!D2:D')
+    for elem in alt2_sn:
+        wifi_sn_list.append(elem)
+    alt2_cont = read_range('1qSjLhAgkvdkABJcn0F-jdbmMTS9vpje9Wc31kGxWYGs', 'бмол!F2:F')
+    for elem in alt2_cont:
+        wifi_cont_list.append(elem)
+    alt3_sn = read_range('1qSjLhAgkvdkABJcn0F-jdbmMTS9vpje9Wc31kGxWYGs', 'moz!B2:B')
+    for elem in alt3_sn:
+        wifi_sn_list.append(elem)
+    alt3_cont = read_range('1qSjLhAgkvdkABJcn0F-jdbmMTS9vpje9Wc31kGxWYGs', 'moz!B2:B')
+    for elem in alt3_cont:
+        wifi_cont_list.append(elem)
+    remains_list = get_remains_wifi_moz(area)
+    count = 0
+    for elem in remains_list:
+        i = 0
+        while i < len(wifi_sn_list):
+            if wifi_sn_list[i][0] == elem[0] and wifi_cont_list[i][0] != "0":
+                set_sn_cont(area, elem[0], wifi_cont_list[i][0])
+                count = count + 1
+            i = i + 1
+    return count
+
+print(moz_check('4_6'))
+
+

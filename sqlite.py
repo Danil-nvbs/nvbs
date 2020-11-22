@@ -16,6 +16,11 @@ def get_types():
     return types_list
 
 
+def types_keyboard():
+    types_keyb = ReplyKeyboardMarkup(get_types(), resize_keyboard=True)
+    return types_keyb
+
+
 def find_type(type):
     conn = sqlite3.connect('orders.db')
     cur = conn.cursor()

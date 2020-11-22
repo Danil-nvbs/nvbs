@@ -7,7 +7,7 @@ import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 import sqlite3
-from sqlite import *
+
 
 
 def end_change_type_keyboard():
@@ -32,9 +32,7 @@ def auth_keyboard():
 
 
 
-def types_keyboard():
-    types_keyb = ReplyKeyboardMarkup(get_types(), resize_keyboard=True)
-    return types_keyb
+
 
 
 def start_keyboard(role):

@@ -1,13 +1,5 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
-from settings import TG_TOKEN, CREDENTIALS_FILE
-from bs4 import BeautifulSoup
-import requests
-import httplib2
-import apiclient.discovery
-from oauth2client.service_account import ServiceAccountCredentials
-import sqlite3
-
+from sqlite import *
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 
 def end_change_type_keyboard():

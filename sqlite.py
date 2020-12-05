@@ -1,7 +1,6 @@
 import sqlite3
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from datetime import datetime, timedelta
-from keyboards import *
-
 
 def get_types():
     conn = sqlite3.connect('orders.db')

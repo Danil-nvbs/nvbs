@@ -1,30 +1,17 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
-from settings import TG_TOKEN, CREDENTIALS_FILE
-from sheets import read_range
-from bs4 import BeautifulSoup
-import requests
-import httplib2
-import apiclient.discovery
-from oauth2client.service_account import ServiceAccountCredentials
-import sqlite3
-from datetime import datetime, timedelta
-from keyboards import *
 from handlers import *
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
+from bs4 import BeautifulSoup
+from settings import TG_TOKEN
+import requests
+
 from sheets import *
-from sqlite import *
 
 # heroku ps:scale worker=1
 # heroku logs --tail
 
 
-TG_TOKEN = "1209301262:AAHFpm5MiDbvARPdb9rcO6jYnFBCVB3u6sI"
-CREDENTIALS_FILE = 'pyconnect-292200-4e5bbf9ac5ff.json'
-
-
-# print(read_range('1C93At0VJH5I2ZCjrAQtmJnSrF-8dUECE1RKetRXcSbk', 'D:F'))
-
 def main():
+    print('Начали')
     my_bot = Updater(TG_TOKEN)
     my_bot.dispatcher.add_handler(MessageHandler(Filters.regex('Анекдот'), get_anecdote))
     my_bot.dispatcher.add_handler(MessageHandler(Filters.contact, auth))
@@ -35,5 +22,5 @@ def main():
     my_bot.idle()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

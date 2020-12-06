@@ -1,5 +1,5 @@
 from sqlite import *
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, ParseMode
 
 
 def end_change_type_keyboard():

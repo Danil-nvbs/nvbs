@@ -1,5 +1,5 @@
 import sqlite3
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, ParseMode
 from datetime import datetime, timedelta
 
 def get_types():
@@ -16,7 +16,7 @@ def get_types():
 
 
 def types_keyboard():
-    types_keyb = ReplyKeyboardMarkup(get_types(), resize_keyboard=True)
+    types_keyb = ReplyKeyboardMarkup(get_types(), resize_keyboard=True, parse_mode=ParseMode.HTML)
     return types_keyb
 
 
@@ -98,7 +98,7 @@ def users_list():
     return user_list  # Возвращаем двумерный список
 
 
-def get_si_remains(area, si):
+def get_si_remains(area, si, role):
     conn = sqlite3.connect('orders.db')  # Коннектимся к ДБ
     cur = conn.cursor()  # Создаём курсор
     db = 'equip_' + area
@@ -108,7 +108,10 @@ def get_si_remains(area, si):
     for elem in remains_tuple:  # Перебираем список кортежей
         newelem = list(elem)  # Преобразуем кортеж в список
         remains_list.append(newelem)  # Добавляем в новый список
-    finish_text = 'Текущие остатки у исполнителя ' + si + ':\n'
+    if role == 'РГ' or role == 'ВИ':
+        finish_text = 'Текущие остатки у исполнителя ' + si + ':\n'
+    elif role == 'СИ':
+        finish_text = 'Твои текущие остатки:\n'
     for elem in remains_list:
         if elem[5] == '' and elem[7] == '':
             finish_text = finish_text + elem[0] + ' - S/N - ' + elem[1] + ' - дата выдачи - ' + elem[2] + ' \n '
@@ -122,19 +125,6 @@ def set_sn_cont(area, sn, cont):
     db = 'equip_' + area
     cur.execute(f"UPDATE {db} SET cont_moz = '{cont}', cont_moz_date = '{time_now}' WHERE sn = '{sn}'")
     conn.commit()
-
-
-def get_remains_wifi_moz(area):
-    conn = sqlite3.connect('orders.db')
-    cur = conn.cursor()
-    db = 'equip_' + area
-    cur.execute(f"SELECT sn from {db} WHERE ((cont_moz is null or cont_moz = '')  AND type = 'Wi-FI')")
-    remains_tuple = cur.fetchall()
-    remains_list = []
-    for elem in remains_tuple:
-        newelem = list(elem)
-        remains_list.append(newelem)
-    return(remains_list)
 
 
 def get_area_remains(area):

@@ -13,7 +13,7 @@ def auth(bot, update):
     if user_name != None:
         start_menu(bot, update)
     else:
-        bot.message.reply_text('Номер телефона не найден, обратитесь к руководителю.', reply_markup=auth_keyboard())
+        bot.message.reply_text('Номер телефона не найден, обратитесь к руководителю.', reply_markup=auth_keyboard(), parse_mode=ParseMode.HTML)
 
 
 def start_menu(bot, update):
@@ -34,14 +34,14 @@ def start_menu(bot, update):
     set_command(3, '', bot.message.chat.id)
     set_command(4, '', bot.message.chat.id)
     if user_name == None:
-        bot.message.reply_text(f'Необходимо пройти авторизацию', reply_markup=auth_keyboard())
+        bot.message.reply_text(f'Необходимо пройти авторизацию', reply_markup=auth_keyboard(), parse_mode=ParseMode.HTML)
     else:
         bot.message.reply_text(f'Привет {user_name}, роль - {user_role}, телефон {user_phone}, ГКС {user_area}',
-                               reply_markup=start_keyboard(user_role))
+                               reply_markup=start_keyboard(user_role), parse_mode=ParseMode.HTML)
 
 
 def take_equip_si(bot, update, area):
-    bot.message.reply_text('Выберите получателя', reply_markup=make_si_keyboard(area))
+    bot.message.reply_text('Выберите получателя', reply_markup=make_si_keyboard(area), parse_mode=ParseMode.HTML)
 
 
 def big_handler(bot, update):
@@ -56,8 +56,9 @@ def big_handler(bot, update):
     user_com4 = row[8]
     # Прилетело "Внести АО"
     if (user_com1 == "Начало") \
-            and (bot.message.text == "Внести АО на склад"):
-        bot.message.reply_text('Выберите тип оборудования', reply_markup=types_keyboard())
+            and (bot.message.text == "Внести АО на склад") \
+            and (user_role == 'РГ' or user_role == "ВИ"):
+        bot.message.reply_text('Выберите тип оборудования', reply_markup=types_keyboard(), parse_mode=ParseMode.HTML)
         set_command(1, "Внести АО на склад", bot.message.chat.id)
     # Прилетел существующий тип АО
     if (user_com1 == "Внести АО на склад") \
@@ -67,7 +68,7 @@ def big_handler(bot, update):
         set_command(2, bot.message.text, bot.message.chat.id)
         bot.message.reply_text('Введите серийные номера в поле ввода \nНажмите "Сменить тип" для внесения '
                                'оборудования другого типа \nНажмите "Закончить" после ввода',
-                               reply_markup=end_change_type_keyboard())
+                               reply_markup=end_change_type_keyboard(), parse_mode=ParseMode.HTML)
     # Прилетел серийник при внесении на склад
     if (user_com1 == "Внести АО на склад") \
             and (find_type(user_com2) == "Yes") \
@@ -76,14 +77,14 @@ def big_handler(bot, update):
             and bot.message.text != "Сменить тип":
         add_sn(user_com2, to_eng_and_up(bot.message.text), user_area)
         bot.message.reply_text(f'Оборудование с серийным номером {to_eng_and_up(bot.message.text)} '
-                               f'внесено на склад. Введите ещё серийник или нажмите "Закончить"')
+                               f'внесено на склад. Введите ещё серийник или нажмите "Закончить"', parse_mode=ParseMode.HTML)
     # Прилетело "Сменить тип"
     if (user_com1 == "Внести АО на склад") \
             and (find_type(user_com2) == "Yes") \
             and (user_role == 'РГ' or user_role == 'ВИ') \
             and bot.message.text == "Сменить тип":
         set_command(2, '', bot.message.chat.id)
-        bot.message.reply_text('Выберите тип оборудования', reply_markup=types_keyboard())
+        bot.message.reply_text('Выберите тип оборудования', reply_markup=types_keyboard(), parse_mode=ParseMode.HTML)
         set_command(1, "Внести АО на склад", bot.message.chat.id)
     # Прилетело "Выдать АО"
     if (user_com1 == "Начало") \
@@ -91,13 +92,13 @@ def big_handler(bot, update):
             and bot.message.text == "Выдать АО":
         set_command(1, "Выдать АО", bot.message.chat.id)
         take_equip_si(bot, update, user_area)
-    # Прилетело реально ФИО СИ
+    # Прилетело реальное ФИО СИ
     if (user_com1 == "Выдать АО") \
             and (user_role == 'РГ' or user_role == 'ВИ') \
             and (find_si(bot.message.text) == 'Yes') \
             and (user_com2 == ''):
         set_command(2, bot.message.text, bot.message.chat.id)
-        bot.message.reply_text(get_si_remains(user_area, bot.message.text), reply_markup=end_change_si_keyboard())
+        bot.message.reply_text(get_si_remains(user_area, bot.message.text, user_role), reply_markup=end_change_si_keyboard(), parse_mode=ParseMode.HTML)
     # Прилетело "Внести АО"
     if (user_com1 == "Выдать АО") \
             and (user_role == 'РГ' or user_role == 'ВИ') \
@@ -117,13 +118,21 @@ def big_handler(bot, update):
     # Прилетело "Посмотреть остатки" от РГКС
     if (user_com1 == "Начало") \
             and (user_role == 'РГ' or user_role == 'ВИ') \
-            and ((bot.message.text == 'Посмотреть остатки') \
-                 or (bot.message.text == 'Общие остатки')):
-        bot.message.reply_text(get_area_remains(user_area), reply_markup=start_keyboard(user_role))
+            and (bot.message.text == 'Посмотреть остатки'):
+        bot.message.reply_text(get_area_remains(user_area), reply_markup=start_keyboard(user_role), parse_mode=ParseMode.HTML)
+    ##################################################################################################
+    ########################################### Роль СИ ##############################################
+    ##################################################################################################
+    # Прилетело "Посмотреть остатки" от СИ
+    if (user_com1 == "Начало") \
+            and (user_role == 'СИ' or user_role == 'ВИ') \
+            and (bot.message.text == 'Посмотреть свои остатки'):
+
+        bot.message.reply_text(get_si_remains(user_area, user_name, user_role), reply_markup=start_keyboard(user_role), parse_mode=ParseMode.HTML)
 
 
 def chose_type(bot, update):
-    bot.message.reply_text('Выберирири', reply_markup=end_keyboard())
+    bot.message.reply_text('Выберирири', reply_markup=end_keyboard(), parse_mode=ParseMode.HTML)
     return "SN"
 
 
